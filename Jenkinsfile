@@ -1,7 +1,7 @@
 pipeline {
     
     environment {
-        registry = "rampeand/MusiQ"
+        registry = "rampeand/musiq"
         registryCredential = 'dockerhub'
     }
 
