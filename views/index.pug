@@ -1,0 +1,94 @@
+doctype html
+html(lang='en')
+    head
+        title MusiQ Video Party App
+        meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+
+        link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css')
+        link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+        script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js')
+        script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js')
+    body
+        .container
+            .row
+                .col-xl-12(style={'background-color': '#572D15'})
+                    h1.text-center.display-1#title MusiQ App
+                .col-lg-12(style={'background-color': '#DAE3D9'})
+                    h1.text-center.display-4#description MusiQ is a music video jukebox that allows everyone at a gathering to search and add their favourite songs to the playlist.
+                .col-sm-6(style={'background-color': '#D4B59D'})
+                    h1.display-5.text-center
+                        a(href='player', target='_blank') Launch PLAYER.
+                .col-sm-6(style={'background-color': '#CE9C6F'})
+                    h1.display-5.text-center
+                        a(href='search', target='_blank') SEARCH for songs.
+                .col-sm-12 *This app is in development and is not for public use.
+                .col-lg-12
+                    p
+                    h3
+                        u Features In Development / TODO
+                    ul
+                        li Create your own jukebox/playlist (multi-instance)
+                        li Invite users from player
+                        li User Access Controls / abuse controls
+                        li CI\CD pipeline (currently container deployment script is manually executed).
+                        li UX audit and cosmetic improvements
+                    p
+                    h3
+                        u Changelog
+                    ul
+                        | July 08, 2019
+                        li Started changelog
+                        li
+                            | Enabled https & http redirect on 2 subdomains [
+                            a(href='', src='http://juq.peelsupport.com') juq.peelsupport.com
+                            |  & 
+                            a(href='', src='http://juq.andrerampersad.me') juq.andrerampersad.me
+                            | ]
+                        li Implemented atomic writes on NoSQL DB for playlist updates
+                        li Added clear playlist feature
+                        li Added thumbnails to playlist
+                        li Added remove (Material Design) icon for songs in playlist
+                    ul
+                        | July 09, 2019
+                        li Implemented song removal from playlist using atomic writes
+                    ul
+                        | July 11, 2019
+                        li Implemented queue up/down buttons and functionality
+                    ul
+                        | July 17, 2019
+                        li Fixed replay bug on song ending
+                        li Implemented playlist looping when last song finishes
+                    ul
+                        | July 18, 2019
+                        li Implemented play icon and functionality in playlist
+                    ul
+                        | July 23, 2019
+                        li Made thumbnails responsive
+                        li Implemented sanity checks on previous/next control buttons
+                        li Added first/last song in playlist detection
+                        li Added verbose logging
+                        li Renamed JuQ Box => MusiQ
+                        li
+                            | Enabled https & http redirect on 2 additional subdomains [
+                            a(href='', src='http://musiq.peelsupport.com') musiq.peelsupport.com
+                            |  & 
+                            a(href='', src='http://musiq.andrerampersad.me') musiq.andrerampersad.me
+                            | ]
+                    ul
+                        | July 24, 2019
+                        li
+                            | Google Sign-In (OAuth 2.0) 
+                            a(href='', src='https://juq.peelsupport.com/auth.htm') song search prototype
+                    ul
+                        | July 27, 2019
+                        li
+                            | Bugfix - selecting a previously played song to "play now" will no longer created a duplicate 0 position song index.
+                    ul
+                        | July 28, 2019
+                        li Implemented pug template engine for Node / converted static pages to templates.
+                        li Created script to rebuild and deploy MusiQ container (CI\CD pipeline to be implemented)
+                        li Added Features in Development / TODO list
+                    p
+
