@@ -75,7 +75,7 @@ pipeline {
 
             steps{
                 sh 'docker build -t musiq_image .'
-                sh 'docker run --name portfolio -d -p 82:8080 musiq_image'
+                sh 'docker run --name musiq -d -p 82:8080 musiq_image'
             }
         }
         
