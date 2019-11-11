@@ -1,7 +1,7 @@
 pipeline {
     
     environment {
-        registry = "rampeand/portfolio"
+        registry = "rampeand/MusiQ"
         registryCredential = 'dockerhub'
     }
 
@@ -18,17 +18,17 @@ pipeline {
             steps {
                 script{
                     try{
-                        sh 'docker stop portfolio'
+                        sh 'docker stop musiq'
                     }catch (err) {
 
                     }
                     try{
-                        sh 'docker rm portfolio'
+                        sh 'docker rm musiq'
                     }catch (err) {
 
                     }
                     try{
-                        sh 'docker rmi portfolio_image'
+                        sh 'docker rmi musiq_image'
                     }catch (err) {
 
                     }
@@ -41,7 +41,7 @@ pipeline {
             agent {
                 docker {
                     image 'node:10-alpine'
-                    args '-p 81:80'
+                    args '-p 82:8080'
                 }
             }
     
@@ -67,20 +67,6 @@ pipeline {
             }
         }
 
-        stage('Inject credentials'){
-            
-            agent{
-                label 'master'
-            }
-
-            steps{
-                withCredentials([file(credentialsId: '54026027-505e-4cef-a768-27ef8abff427'	, variable: 'PORTFOLIO_ENV')]) {
-                    sh 'rm .env -f'
-                    sh 'cat $PORTFOLIO_ENV >> .env'
-                }
-            }
-        }
-
         stage('Build image & deploy container'){
             
             agent{
@@ -88,9 +74,8 @@ pipeline {
             }
 
             steps{
-                sh 'docker build -t portfolio_image .'
-                sh 'rm .env -f'
-                sh 'docker run --name portfolio -d -p 81:80 portfolio_image'
+                sh 'docker build -t musiq_image .'
+                sh 'docker run --name portfolio -d -p 82:8080 musiq_image'
             }
         }
         
