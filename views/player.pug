@@ -12,6 +12,12 @@ html(lang='en')
 		script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js')
 		script(src='https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js')
 		script(src='https://www.gstatic.com/firebasejs/6.2.4/firebase-firestore.js')
+		script(async='', src='https://www.googletagmanager.com/gtag/js?id=UA-146713-9')
+		script.
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'UA-146713-9');
 	body(onload='initPlayer()')
 		.container
 			.row
@@ -41,3 +47,4 @@ html(lang='en')
 			divsToHide[i].style.visibility = "hidden";
 			divsToHide[i].style.display = "none";
 			}
+
