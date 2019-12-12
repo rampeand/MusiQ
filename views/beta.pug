@@ -19,15 +19,15 @@ body(onload='updatePlaylist()')
     .container
         .row
             .col(style='background-color: orange')
-                h1#header.display-1.text-center MusiQ SPA beta
+                h1#header.display-1.text-center MusiQ Search beta
         .row
             
-            .container#jbcreate
+            .container
                 .row
                     .col.input-group
                         input#searchTextField.form-control(type='text', placeholder='Search', name='search')
                     .col-sm-1.input-group
-                        button#createPlaylist.btn.btn-default(type='button', aria-label='Left Align', data-toggle='modal', data-target='#testModal')
+                        button#searchButton.btn.btn-default(type='button', aria-label='Left Align', data-toggle='modal', data-target='#ytSearchResultModal')
                             i.material-icons(style='font-size:200%;color:red') power_settings_new
                 .row
                     .col(style='padding: 2%')
@@ -36,9 +36,9 @@ body(onload='updatePlaylist()')
                     .col(style='padding-top: 2.5%')
                         h2 Playlist
                         ul#songsList.list-group
-    script(type='text/javascript', src='./js/player-fbase.js')
+    
                 // The Modal
-                #testModal.modal.fade
+                #ytSearchResultModal.modal.fade
                     .modal-dialog
                         .modal-content
                             // Modal Header
@@ -51,3 +51,13 @@ body(onload='updatePlaylist()')
                             // Modal footer
                             .modal-footer
                                 button.btn.btn-danger(type='button', data-dismiss='modal') Close
+    script.
+        var input = document.getElementById("searchTextField");
+        input.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById("searchButton").click();
+        }
+        });
+    script(type='text/javascript', src='./js/player-fbase.js')
+    script(type='text/javascript', src='./js/search.js')
