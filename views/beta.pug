@@ -1,0 +1,53 @@
+doctype html
+html(lang='en')
+head
+    title MusiQ Song Request
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css')
+    link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js')
+    script(src='https://apis.google.com/js/api.js')
+    script(src='https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js')
+    script(src='https://www.gstatic.com/firebasejs/6.2.4/firebase-firestore.js')
+    script(src='https://apis.google.com/js/platform.js', async='', defer='')
+    script(src='https://apis.google.com/js/platform.js?onload=renderButton', async='', defer='')
+
+body(onload='updatePlaylist()')
+    .container
+        .row
+            .col(style='background-color: orange')
+                h1#header.display-1.text-center MusiQ SPA beta
+        .row
+            
+            .container#jbcreate
+                .row
+                    .col.input-group
+                        input#searchTextField.form-control(type='text', placeholder='Search', name='search')
+                    .col-sm-1.input-group
+                        button#createPlaylist.btn.btn-default(type='button', aria-label='Left Align', data-toggle='modal', data-target='#testModal')
+                            i.material-icons(style='font-size:200%;color:red') power_settings_new
+                .row
+                    .col(style='padding: 2%')
+                        | The MusiQ player is online and ready for new requests.  Feel free to make this player fullscreen and make requests through other internet connected devices.
+                .row
+                    .col(style='padding-top: 2.5%')
+                        h2 Playlist
+                        ul#songsList.list-group
+    script(type='text/javascript', src='./js/player-fbase.js')
+                // The Modal
+                #testModal.modal.fade
+                    .modal-dialog
+                        .modal-content
+                            // Modal Header
+                            .modal-header
+                                h4.modal-title Search Results
+                                button.close(type='button', data-dismiss='modal') ×
+                            // Modal body
+                            .modal-body
+                                ul#searchResultList
+                            // Modal footer
+                            .modal-footer
+                                button.btn.btn-danger(type='button', data-dismiss='modal') Close
