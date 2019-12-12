@@ -19,22 +19,21 @@ body(onload='loadClient();updatePlaylist();')
     .container
         .row
             .col(style='background-color: orange')
-                h1#header.display-1.text-center MusiQ Search beta
+                h1#header.display-1.text-center MusiQ Search v2
         .row
             
             .container
                 .row
-                    .col.input-group
-                        input#searchTextField.form-control(type='text', placeholder='Search', name='search')
-                    .col-sm-1.input-group
+                    .col.input-group(style='padding-top: 10%')
+                        input#searchTextField.form-control(type='text', placeholder='Enter Song title / Artist name here', name='search')
+                    .col-sm-1.input-group(style='padding-top: 10%')
                         button#searchButton.btn.btn-default(type='button', aria-label='Left Align', data-toggle='modal', data-target='#ytSearchResultModal')
                             i.material-icons(style='font-size:200%;color:red') power_settings_new
                 .row
                     .col(style='padding: 2%')
-                        | The MusiQ player is online and ready for new requests.  Feel free to make this player fullscreen and make requests through other internet connected devices.
                 .row
                     .col(style='padding-top: 2.5%')
-                        h2 Playlist
+                        h2 Songs in Playlist
                         ul#songsList.list-group
     
                 // The Modal
