@@ -15,7 +15,7 @@ head
     script(src='https://apis.google.com/js/platform.js', async='', defer='')
     script(src='https://apis.google.com/js/platform.js?onload=renderButton', async='', defer='')
 
-body(onload='updatePlaylist()')
+body(onload='updatePlaylist();loadClient();')
     .container
         .row
             .col(style='background-color: orange')
