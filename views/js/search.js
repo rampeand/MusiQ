@@ -134,8 +134,3 @@ function loadClient() {
     });
 
   }
-
-  //for OAuth
-  gapi.load("client:auth2", function() {
-    gapi.auth2.init({client_id: "637157888993-l9178kevdkdrfpoqbckmgkdck4ljvjvk.apps.googleusercontent.com"});
-  });
