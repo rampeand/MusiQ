@@ -27,6 +27,20 @@ app.get('/test/:pid',(req, res) => {
   });
 });
 
+app.get('/player2/:pid',(req, res) => {
+  console.log(req.params.pid);
+  res.render('player2.pug',{
+    playerid: req.params.pid
+  });
+});
+
+app.get('/search2/:pid',(req, res) => {
+  console.log(req.params.pid);
+  res.render('search2.pug',{
+    playerid: req.params.pid
+  });
+});
+
 var server = app.listen(8080, function () {
    var host = server.address().address
    var port = server.address().port

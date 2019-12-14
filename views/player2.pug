@@ -1,0 +1,51 @@
+doctype html
+html(lang='en')
+	head
+		title MusiQ Player 
+		meta(charset='utf-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1')
+		link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+		link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css')
+		link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+		script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+		script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js')
+		script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js')
+		script(src='https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js')
+		script(src='https://www.gstatic.com/firebasejs/6.2.4/firebase-firestore.js')
+		script(async='', src='https://www.googletagmanager.com/gtag/js?id=UA-146713-9')
+		script.
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'UA-146713-9');
+	body(onload='initPlayer()')
+		input#playerid.form-control(type="hidden", name="playerid", value=playerid)
+		.container
+			.row
+				.col(style='background-color: Orange;padding:1%')
+					h1#headerTest.display-1.text-center= "MusiQ - " + playerid
+			.row
+				#player.col(style='padding: 0%')
+			.row
+				#playerControls.col
+					button(onclick='loadSong()') Start Playlist
+					button(onclick='player.stopVideo()') Stop Playlist
+					button#btnPrev(onclick='prevSong()') Previous Song
+					button#btnNext(onclick='nextSong()') Next Song
+					button(onclick='clearPlaylist()', style='color: red') Clear Playlist
+			.row
+				.col(style='padding: 2%')
+					| The MusiQ player is online and ready for new requests.  Feel free to make this player fullscreen and make requests through other internet connected devices.
+			.row
+				.col(style='padding-top: 2.5%')
+					h2 Playlist
+					ul#songsList.list-group
+		script(type='text/javascript', src='../js/player.js')
+		script(type='text/javascript', src='../js/v2_player-fbase.js')
+		script.
+			var divsToHide = document.getElementsByClassName("ytp-ad-image-overlay");
+			for(var i = 0; i < divsToHide.length; i++){
+			divsToHide[i].style.visibility = "hidden";
+			divsToHide[i].style.display = "none";
+			}
+

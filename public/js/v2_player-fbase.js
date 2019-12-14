@@ -13,9 +13,14 @@ firebase.initializeApp(firebaseConfig);
 
 const firestore = firebase.firestore();  //grab ref to firestore
 
-function initPlayer(){
+function getPlayerID(){
+    var playerid = document.getElementById("playerid").value;
+    return playerid;
+}
+
+function initPlayer(getPlayerID){
     console.log("initPlayer()");
-    updatePlaylist();
+    updatePlaylist(getPlayerID);
     loadSong();
 }
 
@@ -23,9 +28,9 @@ function loopPlaylist(){
     console.log("loopPlaylist()");
     var i = 0;
     var batch = firestore.batch();
-    firestore.collection("playlist").orderBy("position").get().then(function(querySnapshot) {
+    firestore.collection(getPlayerID()).orderBy("position").get().then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
-            var songRef = firestore.collection("playlist").doc(doc.id);
+            var songRef = firestore.collection(getPlayerID()).doc(doc.id);
             batch.update(songRef, {
                 position: i
             });
@@ -39,7 +44,7 @@ function endedState(){
     console.log("endedState()");
     console.log("video ended naturally on playback");
 
-    var songRef = firestore.collection("playlist");
+    var songRef = firestore.collection(getPlayerID());
     var query = songRef.where("position", ">", 0);
     query.get().then(function(querySnapshot) {
         console.log("Songs left in playlist: " + querySnapshot.size);
@@ -56,7 +61,7 @@ function endedState(){
 
 function loadSong(){
 
-    firestore.collection("playlist").where("position", "==", 0)
+    firestore.collection(getPlayerID()).where("position", "==", 0)
     .onSnapshot(function(querySnapshot) {
 
         querySnapshot.docs.map(function(song) {
@@ -71,7 +76,7 @@ function loadSong(){
 
 function navigationSanityCheck(){
     console.log("navigationSanityCheck() - performing sanity checks on player control buttons");
-        var songRef = firestore.collection("playlist");
+        var songRef = firestore.collection(getPlayerID());
         var lastSongQuery = songRef.where("position", ">", 0);
         var firstSongQuery = songRef.where("position", "<", 0);
         lastSongQuery.get().then(function(querySnapshot) {
@@ -100,7 +105,7 @@ function navigationSanityCheck(){
 
 function updatePlaylist(){
     console.log("updatePlaylist()");
-    firestore.collection("playlist").orderBy('position').onSnapshot(function() {//on db update
+    firestore.collection(getPlayerID()).orderBy('position').onSnapshot(function() {//on db update
         console.log("playlist changed")
         //temporary player controls for dev purposes
         //const playerControls = document.querySelector('#playerControls');
@@ -121,7 +126,7 @@ function updatePlaylist(){
         ul.setAttribute("class","list-group");
         
         var i=0;
-        firestore.collection("playlist").orderBy("position").get().then(function(querySnapshot) {
+        firestore.collection(getPlayerID()).orderBy("position").get().then(function(querySnapshot) {
             console.log("Number of songs in playlist: " + querySnapshot.size);
             querySnapshot.forEach(function(doc) {
                 i++;
@@ -192,9 +197,9 @@ function updatePlaylist(){
 function batchDecrementPlaylist(){
     const decrement = firebase.firestore.FieldValue.increment(-1);
     var batch = firestore.batch();
-    firestore.collection("playlist").get().then(function(querySnapshot) {
+    firestore.collection(getPlayerID()).get().then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
-            var songRef = firestore.collection("playlist").doc(doc.id);
+            var songRef = firestore.collection(getPlayerID()).doc(doc.id);
             batch.update(songRef, {
                 position: decrement
             });
@@ -206,9 +211,9 @@ function batchDecrementPlaylist(){
 function batchIncrementPlaylist(){
     const increment = firebase.firestore.FieldValue.increment(1);
     var batch = firestore.batch();
-    firestore.collection("playlist").get().then(function(querySnapshot) {
+    firestore.collection(getPlayerID()).get().then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
-            var songRef = firestore.collection("playlist").doc(doc.id);
+            var songRef = firestore.collection(getPlayerID()).doc(doc.id);
             batch.update(songRef, {
                 position: increment
             });
@@ -219,9 +224,9 @@ function batchIncrementPlaylist(){
 
 function batchClearPlaylist(){
     var batch = firestore.batch();
-    firestore.collection("playlist").get().then(function(querySnapshot) {
+    firestore.collection(getPlayerID()).get().then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
-            var songRef = firestore.collection("playlist").doc(doc.id);
+            var songRef = firestore.collection(getPlayerID()).doc(doc.id);
             batch.delete(songRef);
         });
     batch.commit();
@@ -229,14 +234,14 @@ function batchClearPlaylist(){
 }
 
 function deleteSong(docID, position){
-    var songRef = firestore.collection("playlist");
+    var songRef = firestore.collection(getPlayerID());
     var query = songRef.where("position", ">=", position);
     const decrement = firebase.firestore.FieldValue.increment(-1);
     var batch = firestore.batch();
 
     query.get().then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
-            var songRef = firestore.collection("playlist").doc(doc.id);
+            var songRef = firestore.collection(getPlayerID()).doc(doc.id);
             if(songRef.id == docID){
                 console.log("delete " + songRef.id);
                 batch.delete(songRef)
@@ -259,14 +264,14 @@ function changeSongPosition(action, docID, position){
     const increment = firebase.firestore.FieldValue.increment(1);
     
     var batch = firestore.batch();
-    var songRef = firestore.collection("playlist");
+    var songRef = firestore.collection(getPlayerID());
     var query;
     switch(action){
         case "playlistUp": 
             query = songRef.where("position", "<=", (position)).where("position", ">=", (position-1));
             query.get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
-                    var songRef = firestore.collection("playlist").doc(doc.id);
+                    var songRef = firestore.collection(getPlayerID()).doc(doc.id);
                     console.log("Current song ref: " + songRef.id);
                     if(songRef.id == docID){
                         console.log("increment " + songRef.id);
@@ -290,7 +295,7 @@ function changeSongPosition(action, docID, position){
             query = songRef.where("position", "<=", (position+1)).where("position", ">=", position);
             query.get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
-                    var songRef = firestore.collection("playlist").doc(doc.id);
+                    var songRef = firestore.collection(getPlayerID()).doc(doc.id);
                     console.log("Current song ref: " + songRef.id);
                     if(songRef.id == docID){
                         console.log("increment " + songRef.id);
@@ -313,7 +318,7 @@ function changeSongPosition(action, docID, position){
         case "playCurrent":
             songRef.get().then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
-                    var songRef = firestore.collection("playlist").doc(doc.id);
+                    var songRef = firestore.collection(getPlayerID()).doc(doc.id);
                     if(songRef.id == docID){
                         console.log("Selected song being played now: " + doc.data().songTitle);
                         batch.update(songRef, {
