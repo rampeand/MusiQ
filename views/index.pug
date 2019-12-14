@@ -24,11 +24,25 @@ html(lang='en')
                 .col-lg-12(style={'background-color': '#DAE3D9'})
                     h1.text-center.display-4#description MusiQ is a music video jukebox that allows everyone at a gathering to search and add their favourite songs to the playlist.
                 .col-sm-6(style={'background-color': '#D4B59D'})
-                    h1.display-5.text-center
-                        a(href='player', target='_blank') Launch PLAYER.
+                    .dropdown
+                    button(type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown')
+                        h1.display-4.text-center
+                            | LAUNCH Player
+                    .dropdown-menu
+                        - var n = 0;
+                        while n < 10
+                            - ++n 
+                            a(class='dropdown-item' href='/player2/Playlist'+n, target='_blank')= 'Player '+n
                 .col-sm-6(style={'background-color': '#CE9C6F'})
-                    h1.display-5.text-center
-                        a(href='beta', target='_blank') SEARCH for songs.
+                    .dropdown
+                    button(type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown')
+                        h1.display-4.text-center
+                            | MANAGE Playlist
+                    .dropdown-menu
+                        - var n = 0;
+                        while n < 10
+                            - ++n 
+                            a(class='dropdown-item' href='/search2/Playlist'+n, target='_blank')= 'Player '+n
                 .col-sm-12 *This app is in development and is not for public use.
                 .col-lg-12
                     p
@@ -45,11 +59,14 @@ html(lang='en')
                     h3
                         u Recent Changes
                     ul
-                        | December 11, 2019
+                        b December 14, 2019
+                        li Implemented support for multiple concurrent players/playlists.
+                    ul
+                        b  December 11, 2019
                         li Implemented new search page with remote control capabilities of the player.
                     p
                     ul
-                        | November 10, 2019
+                        b November 10, 2019
                         li Implemented render unit tests for home, search, and player pages.
                         li Created CI\CD pipeline to automate building, testing and deployment of application.
                     p
