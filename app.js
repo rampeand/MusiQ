@@ -20,6 +20,13 @@ app.get('/', (req, res) => {
   res.render('beta.pug');
 });
 
+app.get('/test/:pid',(req, res) => {
+  console.log(req.params.pid);
+  res.render('test.pug',{
+    playerid: req.params.pid
+  });
+});
+
 var server = app.listen(8080, function () {
    var host = server.address().address
    var port = server.address().port
