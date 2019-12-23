@@ -34,6 +34,13 @@ app.get('/player2/:pid',(req, res) => {
   });
 });
 
+app.get('/player3/:pid',(req, res) => {
+  console.log(req.params.pid);
+  res.render('player3.pug',{
+    playerid: req.params.pid
+  });
+});
+
 app.get('/search2/:pid',(req, res) => {
   console.log(req.params.pid);
   res.render('search2.pug',{

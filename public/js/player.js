@@ -17,6 +17,18 @@ function onYouTubeIframeAPIReady() {
   });
 }
 
+//YT API Auth
+gapi.load("client:auth2", function() {
+  gapi.auth2.init({client_id: "637157888993-l9178kevdkdrfpoqbckmgkdck4ljvjvk.apps.googleusercontent.com"});
+});
+
+function loadClient() {
+  gapi.client.setApiKey("AIzaSyBKE9MzjNBkMIf3eyh69uYo8aDBc3VD_5o");
+  return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+      .then(function() { console.log("GAPI client loaded for API"); },
+            function(err) { console.error("Error loading GAPI client for API", err); });
+}
+
 function onPlayerReady(event) {
   event.target.playVideo();
 }
