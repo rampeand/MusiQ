@@ -13,6 +13,8 @@ html(lang='en')
 		script(src='https://apis.google.com/js/api.js')
 		script(src='https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js')
 		script(src='https://www.gstatic.com/firebasejs/6.2.4/firebase-firestore.js')
+		script(src='https://apis.google.com/js/platform.js', async='', defer='')
+		script(src='https://apis.google.com/js/platform.js?onload=renderButton', async='', defer='')
 		script(async='', src='https://www.googletagmanager.com/gtag/js?id=UA-146713-9')
 		script.
 			window.dataLayer = window.dataLayer || [];
@@ -50,34 +52,33 @@ html(lang='en')
 					h2 Playlist
 					ul#songsList.list-group
 
-			// The Modal
-			#ytSearchResultModal.modal.fade
-				.modal-dialog
-					.modal-content
-						// Modal Header
-						.modal-header
-							h4.modal-title Search Results
-							button.close(type='button', data-dismiss='modal') ×
-						// Modal body
-						.modal-body
-							ul#searchResultList
-						// Modal footer
-						.modal-footer
-							button.btn.btn-danger(type='button', data-dismiss='modal') Close
-			
-		
+		// The Modal
+		#ytSearchResultModal.modal.fade
+			.modal-dialog
+				.modal-content
+					// Modal Header
+					.modal-header
+						h4.modal-title Search Results
+						button.close(type='button', data-dismiss='modal') ×
+					// Modal body
+					.modal-body
+						ul#searchResultList
+					// Modal footer
+					.modal-footer
+						button.btn.btn-danger(type='button', data-dismiss='modal') Close
+						
 		script(type='text/javascript', src='../js/player.js')
 		script(type='text/javascript', src='../js/v3_player-fbase.js')
 		
 		
-	script.
-		var input = document.getElementById("searchTextField");
-		input.addEventListener("keyup", function(event) {
-		if (event.keyCode === 13) {
-		event.preventDefault();
-		document.getElementById("searchButton").click();
-		}
-		});
+		script.
+			var input = document.getElementById("searchTextField");
+			input.addEventListener("keyup", function(event) {
+			if (event.keyCode === 13) {
+			event.preventDefault();
+			document.getElementById("searchButton").click();
+			}
+			});
 
 		script.
 			var divsToHide = document.getElementsByClassName("ytp-ad-image-overlay");
