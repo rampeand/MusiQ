@@ -372,12 +372,14 @@ function getPlayerID(){
     return playerid;
 }
 
-  //var playlistCount;
-//var firestore = firebase.firestore();  //grab ref to firestore
 var songRef = firestore.collection(getPlayerID());
 
 const outputHeader = document.querySelector("#headerTest");
 const inputTextField = document.querySelector("#searchTextField");
+
+btnAddSong.addEventListener("click", function() {
+
+});
 
 searchButton.addEventListener("click", function() {
     const ytSearchQuery = inputTextField.value;
@@ -405,7 +407,7 @@ function modModal (response){
 
         var button=document.createElement('input');
         button.setAttribute('type','button');
-        button.setAttribute('value', 'Play ' + title);
+        button.setAttribute('value', 'Add ' + title);
         button.setAttribute('onclick','addSongToTRDB(ytSearchResults.result.items['+ i +'])');
 
         var img = document.createElement('img');
@@ -433,7 +435,9 @@ function modModal (response){
   }
   
   function addSongToTRDB(selectedSong){
-    $('#ytSearchResultModal').modal('hide');
+    $('#ytSearchResultModal').modal('hide'); //close search results modal
+    $('#searchBoxModal').modal('hide'); //close search box modal
+    alert("Song added to playlist!");
 
     var selSongTitle = selectedSong.snippet.title;
     var selVideoID = selectedSong.id.videoId;

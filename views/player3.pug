@@ -30,29 +30,46 @@ html(lang='en')
 			.row
 				#player.col(style='padding: 0%')
 			.row
-				#playerControls.col
-					button(onclick='loadSong()') Start Playlist
-					button(onclick='player.stopVideo()') Stop Playlist
-					button#btnPrev(onclick='prevSong()') Previous Song
-					button#btnNext(onclick='nextSong()') Next Song
+				.btn-group#playerControls 
+					//h4 Playlist Controls
+					//button(onclick='loadSong()') Start Playlist
+					//button(onclick='player.stopVideo()') Stop Playlist
+					button#btnAddSong.btn.btn-default(type='button', class="btn btn-primary", data-toggle='modal', data-target='#searchBoxModal') Add Song
+					button#btnPrev(onclick='prevSong()') <<
+					button#btnNext(onclick='nextSong()') >>
 					button(onclick='clearPlaylist()', style='color: red') Clear Playlist
-					button#togglePlaylistUI(onclick='togglePlaylistVisibility()', style='color: red') Hide Playlist
+					button#togglePlaylistUI(onclick='togglePlaylistVisibility()') Hide Playlist
 			.row
-				.col(style='padding: 2%')
-					| The MusiQ player is online and ready for new requests.  Feel free to make this player fullscreen and make requests through other internet connected devices.
+				.col#sharePlaylist(style='padding: 2%')
+					//input(value=playerid)
+					| <b>Invite others </b> to add songs / control the player by sharing this link: </br>
 			.row#search
-				.col-sm-11.input-group(style='padding-top: 2%')
-					input#searchTextField.form-control(type='text', placeholder='Enter Song title / Artist name here', name='search')
-				.col-sm-1.input-group(style='padding-top: 1%')
-					button#searchButton.btn.btn-default(type='button', aria-label='Left Align', data-toggle='modal', data-target='#ytSearchResultModal')
-					i.material-icons(style='font-size:200%;color:red') youtube_searched_for
+
 
 			.row#playlist
 				.col(style='padding-top: 2.5%')
 					h2 Playlist
 					ul#songsList.list-group
 
-		// The Modal
+		//search box modal
+		#searchBoxModal.modal.fade
+			.modal-dialog
+				.modal-content
+					// Modal Header
+					.modal-header
+						h4.modal-title Song Search
+						button.close(type='button', data-dismiss='modal') ×
+					// Modal body
+					.modal-body
+						.col-sm-12.input-group(style='padding-top: 2%')
+							input#searchTextField.form-control(type='text', placeholder='Enter Song title / Artist name here', name='search')
+							button#searchButton.btn.btn-default(type='button', aria-label='Left Align', data-toggle='modal', data-target='#ytSearchResultModal')
+								i.material-icons(style='font-size:200%;color:red') youtube_searched_for
+					// Modal footer
+					.modal-footer
+						button.btn.btn-danger(type='button', data-dismiss='modal') Close
+
+		// YT search result modal
 		#ytSearchResultModal.modal.fade
 			.modal-dialog
 				.modal-content
@@ -74,10 +91,10 @@ html(lang='en')
 		script.
 			var input = document.getElementById("searchTextField");
 			input.addEventListener("keyup", function(event) {
-			if (event.keyCode === 13) {
-			event.preventDefault();
-			document.getElementById("searchButton").click();
-			}
+				if (event.keyCode === 13) {
+					event.preventDefault();
+					document.getElementById("searchButton").click();
+				}
 			});
 
 		script.
@@ -87,4 +104,8 @@ html(lang='en')
 				missdivsToHide[i].style.display = "none";
 			}
 		
-
+		script.
+			let shareURL = "https://musiq.fun/search2/" + playerid.value;
+			//console.log(shareURL);
+			let displayShareURL = document.getElementById("sharePlaylist");
+			displayShareURL.innerHTML += shareURL;

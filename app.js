@@ -35,7 +35,7 @@ app.get('/player2/:pid',(req, res) => {
 });
 
 app.get('/player3/:pid',(req, res) => {
-  console.log(req.params.pid);
+  //console.log(req.params.pid);
   res.render('player3.pug',{
     playerid: req.params.pid
   });
