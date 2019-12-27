@@ -31,14 +31,14 @@ html(lang='en')
 				#player.col(style='padding: 0%')
 			.row
 				.btn-group#playerControls 
-					//h4 Playlist Controls
-					//button(onclick='loadSong()') Start Playlist
-					//button(onclick='player.stopVideo()') Stop Playlist
-					button#btnAddSong.btn.btn-default(type='button', class="btn btn-primary", data-toggle='modal', data-target='#searchBoxModal') Add Song
-					button#btnPrev(onclick='prevSong()') <<
-					button#btnNext(onclick='nextSong()') >>
-					button(onclick='clearPlaylist()', style='color: red') Clear Playlist
-					button#togglePlaylistUI(onclick='togglePlaylistVisibility()') Hide Playlist
+					button#btnAddSong.btn.btn-sm(type='button', class="btn btn-primary", data-toggle='modal', data-target='#searchBoxModal') Add Song
+					button#btnPrev(type='button', class="btn btn-outline-secondary", onclick='prevSong()')
+						i.material-icons(style='font-size:24px;color:black') skip_previous
+					button#btnNext(type='button', class="btn btn-outline-secondary", onclick='nextSong()')
+						i.material-icons(style='font-size:24px;color:black') skip_next
+					button#togglePlaylistUI.btn.btn-sm(class="btn btn-outline-success", onclick='togglePlaylistVisibility()') Hide Playlist
+					button#btnClearPlaylist.btn.btn-sm(class='btn btn-danger', onclick='clearPlaylist()') Clear Playlist
+					
 			.row
 				.col#sharePlaylist(style='padding: 2%')
 					//input(value=playerid)
@@ -87,7 +87,6 @@ html(lang='en')
 		script(type='text/javascript', src='../js/player.js')
 		script(type='text/javascript', src='../js/v3_player-fbase.js')
 		
-		
 		script.
 			var input = document.getElementById("searchTextField");
 			input.addEventListener("keyup", function(event) {
@@ -102,10 +101,10 @@ html(lang='en')
 			for(var i = 0; i < divsToHide.length; i++){
 				divsToHide[i].style.visibility = "hidden";
 				missdivsToHide[i].style.display = "none";
+				console.log(i);
 			}
 		
 		script.
 			let shareURL = "https://musiq.fun/search2/" + playerid.value;
-			//console.log(shareURL);
 			let displayShareURL = document.getElementById("sharePlaylist");
 			displayShareURL.innerHTML += shareURL;

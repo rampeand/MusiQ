@@ -348,17 +348,20 @@ function changeSongPosition(action, docID, position){
 function togglePlaylistVisibility(){
     let playlistUI = document.getElementById("playlist");
     let playlistToggleBtn = document.getElementById("togglePlaylistUI");
+    let clearPlaylistBtn = document.getElementById("btnClearPlaylist");
 
     if (playlistUI.style.visibility == "hidden"){
         playlistUI.style.visibility = "visible";
         console.log("playlist shown");
-        playlistToggleBtn.style.color = "red";
+        //playlistToggleBtn.style.color = "red";
+        clearPlaylistBtn.style.visibility = "visible";
         playlistToggleBtn.textContent = "Hide Playlist";
         
     } else {
         playlistUI.style.visibility = "hidden";
         console.log("playlistUI hidden");
-        playlistToggleBtn.style.color = "green";
+        clearPlaylistBtn.style.visibility = "hidden";
+        //playlistToggleBtn.style.color = "green";
         playlistToggleBtn.textContent = "Show Playlist";
     }   
 }
