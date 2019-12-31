@@ -33,7 +33,7 @@ function getPlayerID(){
 
 function initPlayer(getPlayerID){
     console.log("initPlayer()");
-    togglePlaylistVisibility()
+    togglePlaylistVisibility();
     updatePlaylist(getPlayerID);
     loadSong();
     loadClient();

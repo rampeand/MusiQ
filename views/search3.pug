@@ -1,0 +1,110 @@
+doctype html
+html(lang='en')
+	head
+		title MusiQ Song Request
+		meta(charset='utf-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1')
+		link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+		link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css')
+		link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+		script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+		script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js')
+		script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js')
+		script(src='https://apis.google.com/js/api.js')
+		script(src='https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js')
+		script(src='https://www.gstatic.com/firebasejs/6.2.4/firebase-firestore.js')
+		script(src='https://apis.google.com/js/platform.js', async='', defer='')
+		script(src='https://apis.google.com/js/platform.js?onload=renderButton', async='', defer='')
+		script(async='', src='https://www.googletagmanager.com/gtag/js?id=UA-146713-9')
+		script.
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'UA-146713-9');
+	body(onload='loadClient();updatePlaylist();')
+		input#playerid.form-control(type="hidden", name="playerid", value=playerid)
+		.container
+			.row
+				.col(style='background-color: Orange;padding:1%')
+					h3#headerTest.display-1.text-center= "MusiQ - " + playerid
+			.row
+				//#player.col(style='padding: 0%')
+			.row
+				.btn-group#playerControls 
+					button#btnAddSong.btn.btn-sm(type='button', class="btn btn-primary", data-toggle='modal', data-target='#searchBoxModal') Add Song
+					button#btnPrev(type='button', class="btn btn-outline-secondary", onclick='prevSong()')
+						i.material-icons(style='font-size:24px;color:black') skip_previous
+					button#btnNext(type='button', class="btn btn-outline-secondary", onclick='nextSong()')
+						i.material-icons(style='font-size:24px;color:black') skip_next
+					//button#togglePlaylistUI.btn.btn-sm(class="btn btn-outline-success", onclick='togglePlaylistVisibility()') Hide Playlist
+					//button#btnClearPlaylist.btn.btn-sm(class='btn btn-danger', onclick='clearPlaylist()') Clear Playlist
+					
+			.row
+				.col#sharePlaylist(style='padding: 2%')
+					//input(value=playerid)
+					| <b>Invite others </b> to add songs / control the player by sharing this URL: </br>
+			.row#search
+
+
+			.row#playlist
+				.col(style='padding-top: 2.5%')
+					h2 Playlist
+					ul#songsList.list-group
+
+		//search box modal
+		#searchBoxModal.modal.fade
+			.modal-dialog
+				.modal-content
+					// Modal Header
+					.modal-header
+						h4.modal-title Song Search
+						button.close(type='button', data-dismiss='modal') ×
+					// Modal body
+					.modal-body
+						.col-sm-12.input-group(style='padding-top: 2%')
+							input#searchTextField.form-control(type='text', placeholder='Enter Song title / Artist name here', name='search')
+							button#searchButton.btn.btn-default(type='button', aria-label='Left Align', data-toggle='modal', data-target='#ytSearchResultModal')
+								i.material-icons(style='font-size:200%;color:red') youtube_searched_for
+					// Modal footer
+					.modal-footer
+						button.btn.btn-danger(type='button', data-dismiss='modal') Close
+
+		// YT search result modal
+		#ytSearchResultModal.modal.fade
+			.modal-dialog
+				.modal-content
+					// Modal Header
+					.modal-header
+						h4.modal-title Top 5 Search Results
+						button.close(type='button', data-dismiss='modal') ×
+					// Modal body
+					.modal-body
+						ul#searchResultList
+					// Modal footer
+					.modal-footer
+						button.btn.btn-danger(type='button', data-dismiss='modal') Close
+						
+		script(type='text/javascript', src='../js/player.js')
+		script(type='text/javascript', src='../js/v3_player-fbase.js')
+		
+		script.
+			var input = document.getElementById("searchTextField");
+			input.addEventListener("keyup", function(event) {
+				if (event.keyCode === 13) {
+					event.preventDefault();
+					document.getElementById("searchButton").click();
+				}
+			});
+
+		script.
+			var divsToHide = document.getElementsByClassName("ytp-ad-image-overlay");
+			for(var i = 0; i < divsToHide.length; i++){
+				divsToHide[i].style.visibility = "hidden";
+				missdivsToHide[i].style.display = "none";
+				console.log(i);
+			}
+		
+		script.
+			let shareURL = "https://musiq.fun/search3/" + playerid.value;
+			let displayShareURL = document.getElementById("sharePlaylist");
+			displayShareURL.innerHTML += shareURL;
