@@ -12,6 +12,7 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const firestore = firebase.firestore();  //grab ref to firestore
+const timestamp = firebase.firestore.FieldValue.serverTimestamp();
 
 
 //YT API Auth
@@ -83,9 +84,20 @@ function loadSong(){
 
             console.log("Playing: " + song.data().songTitle);
             getYTVID(song.data().videoID);
+            //firestore.collection(getPlayerID()).doc(song.id).update({lastPlayed: timestamp});  will cause endless loop
         });
-
-    });   
+        
+    });  
+    
+    //update last played timestamp
+    firestore.collection(getPlayerID()).where("position", "==", 0).get()
+    .then(function(querySnapshot){
+        querySnapshot.docs.map(function(doc) {
+            //console.log(doc.id, " => ", doc.data());
+            firestore.collection(getPlayerID()).doc(doc.id).update({lastPlayed: timestamp});
+        })
+    });
+    
       
 }
 
@@ -454,6 +466,8 @@ function modModal (response){
         
         songRef.add({
             position    : size,
+            addedOn     : timestamp,
+            lastPlayed  : timestamp,
             songTitle   : selSongTitle,
             videoID     : selVideoID,
             thumbnails  : selThumbnails,
