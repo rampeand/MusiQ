@@ -1,60 +1,86 @@
-app = require('../app');
 var supertest = require("supertest");
 var should = require("should");
 
 // This agent refers to PORT where the program is running.
-
-var server = supertest.agent("http://localhost:8080");
+// This agent refers to the app instance.
+var server = supertest(require("../app"));
 
 // UNIT test begin
 
-describe("Index render test",function(){
-
-  // #1 should return home page
-  it("should return home page",function(done){
-    // calling home page
+describe("Index render test", function () {
+  it("should return home page", function (done) {
     server
-    .get("/")
-    .expect("Content-type",/text/)
-    .expect(200) // THis is HTTP response
-    .end(function(err,res){
-      // HTTP status should be 200
-      res.status.should.equal(200);
-      done();
-    });
+      .get("/")
+      .expect("Content-type", /html/)
+      .expect(200)
+      .end(function (err, res) {
+        res.status.should.equal(200);
+        done();
+      });
   });
 });
 
-describe("Song search render test",function(){
-
-  // #2 should return search page
-  it("should return home page",function(done){
-    // calling search page
+describe("Player page render test", function () {
+  it("should return player page for /player/:pid", function (done) {
     server
-    .get("/search")
-    .expect("Content-type",/text/)
-    .expect(200) // THis is HTTP response
-    .end(function(err,res){
-      // HTTP status should be 200
-      res.status.should.equal(200);
-      done();
-    });
+      .get("/player/TestPlaylist")
+      .expect("Content-type", /html/)
+      .expect(200)
+      .end(function (err, res) {
+        res.status.should.equal(200);
+        done();
+      });
   });
 });
 
-describe("Player render test",function(){
-
-  // #3 should return player page
-  it("should return home page",function(done){
-    // calling player page
+describe("Queue page render test", function () {
+  it("should return queue page for /queue/:pid", function (done) {
     server
-    .get("/player")
-    .expect("Content-type",/text/)
-    .expect(200) // THis is HTTP response
-    .end(function(err,res){
-      // HTTP status should be 200
-      res.status.should.equal(200);
-      done();
-    });
+      .get("/queue/TestPlaylist")
+      .expect("Content-type", /html/)
+      .expect(200)
+      .end(function (err, res) {
+        res.status.should.equal(200);
+        done();
+      });
+  });
+});
+
+describe("Admin page render test", function () {
+  it("should return admin page for /admin", function (done) {
+    server
+      .get("/admin")
+      .expect("Content-type", /html/)
+      .expect(200)
+      .end(function (err, res) {
+        res.status.should.equal(200);
+        done();
+      });
+  });
+});
+
+describe("Backward-compat player3 route test", function () {
+  it("should return player page for /player3/:pid", function (done) {
+    server
+      .get("/player3/TestPlaylist")
+      .expect("Content-type", /html/)
+      .expect(200)
+      .end(function (err, res) {
+        res.status.should.equal(200);
+        done();
+      });
+  });
+});
+
+describe("Backward-compat search3 route test", function () {
+  it("should return player page for /search3/:pid", function (done) {
+    server
+      .get("/search3/TestPlaylist")
+      .expect("Content-type", /html/)
+      .expect(200)
+      .end(function (err, res) {
+        res.status.should.equal(200);
+        done();
+      });
   });
 });

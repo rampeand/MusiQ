@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusiQ — Player</title>
+    <meta name="description" content="MusiQ shared music video player — search, queue, and enjoy music together.">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-firestore.js"></script>
+
+    <!-- Google APIs (YouTube Data API) -->
+    <script src="https://apis.google.com/js/api.js"></script>
+</head>
+
+<body>
+
+    <div class="player-wrapper">
+
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <a href="/" class="topbar-brand">♬ MusiQ</a>
+                <span class="topbar-playlist-name" id="playlistNameDisplay">Loading…</span>
+            </div>
+            <div class="topbar-right">
+                <button class="btn btn-secondary btn-icon" id="btnShare" title="Copy invite link"
+                    onclick="sharePlaylist()">
+                    <span class="material-icons-round" style="font-size:18px">share</span>
+                </button>
+                <a href="/" class="btn btn-secondary btn-icon" title="Back to home">
+                    <span class="material-icons-round" style="font-size:18px">home</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <div class="player-main">
+
+            <!-- Left: Video + Controls + Search -->
+            <div class="video-section">
+
+                <!-- Video Player -->
+                <div class="video-container" id="videoContainer">
+                    <div id="player"></div>
+                </div>
+
+                <!-- Now Playing -->
+                <div class="now-playing-info" id="nowPlayingInfo" style="display:none">
+                    <span class="now-playing-label">
+                        <span class="pulse-dot"></span>
+                        Now Playing
+                    </span>
+                    <span class="now-playing-title" id="nowPlayingTitle">—</span>
+                </div>
+
+                <!-- Controls -->
+                <div class="player-controls glass">
+                    <button class="btn-icon" id="btnPrev" onclick="prevSong()" title="Previous">
+                        <span class="material-icons-round">skip_previous</span>
+                    </button>
+                    <button class="btn-icon active" id="btnPlay" onclick="togglePlayPause()" title="Play / Pause">
+                        <span class="material-icons-round" id="playPauseIcon">play_arrow</span>
+                    </button>
+                    <button class="btn-icon" id="btnNext" onclick="nextSong()" title="Next">
+                        <span class="material-icons-round">skip_next</span>
+                    </button>
+                    <div class="controls-divider"></div>
+                    <button class="btn btn-danger" onclick="clearPlaylist()"
+                        style="font-size:0.8rem;padding:0.4rem 0.8rem">
+                        <span class="material-icons-round" style="font-size:16px">delete_sweep</span>
+                        Clear
+                    </button>
+                </div>
+
+                <!-- Search -->
+                <div class="search-section" style="padding:0">
+                    <div class="search-bar">
+                        <span class="material-icons-round"
+                            style="color:var(--text-muted);padding-left:8px;font-size:20px">search</span>
+                        <input type="text" class="input" id="searchTextField" placeholder="Search for songs on YouTube…"
+                            autocomplete="off">
+                        <button class="btn btn-primary" id="searchButton" onclick="doSearch()"
+                            style="border-radius:var(--radius-md)">
+                            Search
+                        </button>
+                    </div>
+                    <div class="search-results glass" id="searchResults">
+                        <div class="search-results-inner">
+                            <div class="search-results-header">
+                                <h3>Search Results</h3>
+                                <button class="btn btn-secondary" onclick="closeSearchResults()"
+                                    style="font-size:0.75rem;padding:0.3rem 0.6rem">Close</button>
+                            </div>
+                            <ul id="searchResultList"></ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right: Playlist Sidebar -->
+            <aside class="playlist-sidebar">
+                <div class="playlist-header">
+                    <h2>
+                        <span class="material-icons-round"
+                            style="font-size:18px;vertical-align:middle;margin-right:4px">queue_music</span>
+                        Playlist
+                    </h2>
+                    <span class="playlist-count" id="playlistCount">0 songs</span>
+                </div>
+                <div class="playlist-list" id="playlistList">
+                    <div class="playlist-empty" id="playlistEmpty">
+                        <span class="playlist-empty-icon">🎵</span>
+                        <p>No songs yet.<br>Search and add songs to get started!</p>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- App JS -->
+    <script src="/js/app.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusiQ — Music Video Jukebox for Everyone</title>
+    <meta name="description" content="MusiQ is a music video jukebox that lets everyone at a gathering search and add their favourite songs to a shared playlist in real-time.">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round">
+</head>
+<body>
+
+<div class="landing-wrapper">
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <span class="navbar-brand">♬ MusiQ</span>
+        <div class="navbar-links">
+            <a href="#features">Features</a>
+            <a href="https://github.com/rampeand/MusiQ" target="_blank">GitHub</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+        <div class="hero-badge">
+            <span class="material-icons-round" style="font-size:14px">music_note</span>
+            Collaborative Music Jukebox
+        </div>
+
+        <h1 class="hero-title">
+            Your party.<br>
+            <span class="gradient-text">Everyone's playlist.</span>
+        </h1>
+
+        <p class="hero-subtitle">
+            MusiQ is a real-time music video jukebox that lets everyone at a gathering search YouTube and add their favourite songs to a shared playlist.
+        </p>
+
+        <div class="hero-actions">
+            <button class="btn btn-primary" id="btnCreatePlaylist" onclick="createPlaylist()">
+                <span class="material-icons-round" style="font-size:18px">add_circle</span>
+                Create a Playlist
+            </button>
+        </div>
+
+        <div class="hero-join">
+            <input type="text" class="input" id="joinInput" placeholder="Enter a playlist name to join…" maxlength="30">
+            <button class="btn btn-secondary" onclick="joinPlaylist()">
+                <span class="material-icons-round" style="font-size:16px">login</span>
+                Join
+            </button>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <h2 class="features-heading">How it works</h2>
+        <div class="features-grid">
+
+            <div class="feature-card glass fade-in">
+                <div class="feature-icon">
+                    <span class="material-icons-round">search</span>
+                </div>
+                <h3>Search Songs</h3>
+                <p>Search millions of music videos on YouTube directly from the app and add them to the shared playlist.</p>
+            </div>
+
+            <div class="feature-card glass fade-in-delay-1">
+                <div class="feature-icon" style="background:rgba(236,72,153,0.12);color:var(--accent-pink)">
+                    <span class="material-icons-round">share</span>
+                </div>
+                <h3>Share &amp; Invite</h3>
+                <p>Share a simple link so anyone at the party can add songs from their own device — no app install needed.</p>
+            </div>
+
+            <div class="feature-card glass fade-in-delay-2">
+                <div class="feature-icon" style="background:rgba(16,185,129,0.12);color:var(--accent-green)">
+                    <span class="material-icons-round">sync</span>
+                </div>
+                <h3>Real-Time Sync</h3>
+                <p>The playlist updates in real-time for everyone. Reorder songs, skip tracks, and control playback live.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>MusiQ &copy; 2026 &mdash; Built with ♥ by <a href="https://github.com/rampeand" target="_blank">rampeand</a></p>
+    </footer>
+
+</div>
+
+<script>
+    // --- Navbar scroll effect ---
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // --- Create a new playlist with a random name ---
+    function createPlaylist() {
+        const adjectives = ['Party','Chill','Vibes','Epic','Night','Summer','Sunset','Dance','Groovy','Fire'];
+        const nouns = ['Mix','Beats','Session','Jam','Wave','Flow','Zone','Drop','Mood','Set'];
+        const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+        const noun = nouns[Math.floor(Math.random() * nouns.length)];
+        const id = Math.floor(Math.random() * 900 + 100);
+        const name = adj + noun + id;
+        window.location.href = '/player/' + encodeURIComponent(name);
+    }
+
+    // --- Join an existing playlist ---
+    function joinPlaylist() {
+        const input = document.getElementById('joinInput');
+        const name = input.value.trim();
+        if (!name) {
+            input.focus();
+            input.style.borderColor = 'var(--accent-red)';
+            setTimeout(() => { input.style.borderColor = ''; }, 1500);
+            return;
+        }
+        window.location.href = '/player/' + encodeURIComponent(name);
+    }
+
+    // Enter key on join input
+    document.getElementById('joinInput').addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') joinPlaylist();
+    });
+</script>
+
+</body>
+</html>

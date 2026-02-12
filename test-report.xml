@@ -1,23 +1,8 @@
-Example app listening at http://:::8080
-<testsuite name="Mocha Tests" tests="3" failures="0" errors="1" skipped="0" timestamp="Mon, 11 Nov 2019 01:11:08 GMT" time="1.304">
-<testcase classname="Index render test" name="should return home page" time="1.189"/>
-<testcase classname="Song search render test" name="should return home page" time="0.086"/>
-<testcase classname="Player render test" name="should return home page" time="0"><failure>expected 404 to be 200
-
-      + expected - actual
-
-      -404
-      +200
-      
-AssertionError: expected 404 to be 200
-    at Assertion.fail (node_modules\should\cjs\should.js:275:17)
-    at Assertion.value (node_modules\should\cjs\should.js:356:19)
-    at Test.&#x3C;anonymous&#x3E; (test\test.js:56:25)
-    at Test.assert (node_modules\supertest\lib\test.js:181:6)
-    at localAssert (node_modules\supertest\lib\test.js:131:12)
-    at C:\Users\andre\Documents\GitHub\MusiQ\node_modules\supertest\lib\test.js:128:5
-    at Test.Request.callback (node_modules\superagent\lib\node\index.js:728:3)
-    at IncomingMessage.parser (node_modules\superagent\lib\node\index.js:916:18)
-    at endReadableNT (_stream_readable.js:1129:12)
-    at process._tickCallback (internal/process/next_tick.js:63:19)</failure></testcase>
+<testsuite name="Mocha Tests" tests="6" failures="0" errors="0" skipped="0" timestamp="Thu, 12 Feb 2026 01:30:04 GMT" time="0.059">
+<testcase classname="Index render test" name="should return home page" time="0.026"/>
+<testcase classname="Player page render test" name="should return player page for /player/:pid" time="0.007"/>
+<testcase classname="Queue page render test" name="should return queue page for /queue/:pid" time="0.005"/>
+<testcase classname="Admin page render test" name="should return admin page for /admin" time="0.006"/>
+<testcase classname="Backward-compat player3 route test" name="should return player page for /player3/:pid" time="0.006"/>
+<testcase classname="Backward-compat search3 route test" name="should return player page for /search3/:pid" time="0.004"/>
 </testsuite>

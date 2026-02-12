@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusiQ — Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round">
+    <style>
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: var(--space-md);
+            height: calc(100vh - 80px);
+            padding: var(--space-md);
+        }
+
+        .admin-sidebar {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .admin-main {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+        }
+
+        .playlist-row {
+            padding: var(--space-sm) var(--space-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .playlist-row:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .playlist-row.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-left: 3px solid var(--primary);
+        }
+
+        .playlist-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .song-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: var(--space-md);
+        }
+
+        .song-table th {
+            text-align: left;
+            padding: var(--space-sm);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .song-table td {
+            padding: var(--space-sm);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-firestore.js"></script>
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="topbar-left">
+            <a href="/" class="topbar-brand">♬ MusiQ Admin</a>
+        </div>
+        <div class="topbar-right">
+            <button class="btn btn-secondary" onclick="refreshList()">Refresh List</button>
+            <button class="btn btn-danger" onclick="autoClean()">
+                <span class="material-icons-round" style="font-size:16px">delete_sweep</span>
+                Auto-Clean (>24h)
+            </button>
+        </div>
+    </header>
+
+    <div class="admin-grid">
+        <!-- Sidebar: List of Queues -->
+        <aside class="admin-sidebar">
+            <div style="padding:var(--space-md);border-bottom:1px solid rgba(255,255,255,0.1)">
+                <h3 style="margin:0">Active Queues</h3>
+                <small id="queueCount" style="color:var(--text-muted)">Loading...</small>
+            </div>
+            <div id="queueList"></div>
+        </aside>
+
+        <!-- Main: Queue Details -->
+        <main class="admin-main" id="adminMain">
+            <div style="display:flex;justify-content:center;align-items:center;height:100%;color:var(--text-muted)">
+                Select a queue to view details
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/admin.js"></script>
+</body>
+
+</html>

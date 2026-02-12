@@ -1,63 +1,45 @@
 var express = require('express');
+var path = require('path');
 var app = express();
 
-app.set('view engine', 'pug');
-app.use(express.static(__dirname + '/public'));
+// Serve static files from /public
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
-   res.render('index.pug');
- });
-
- app.get('/player', (req, res) => {
-   res.render('player.pug');
- });
-
- app.get('/search', (req, res) => {
-   res.render('search.pug');
- });
-
- app.get('/beta', (req, res) => {
-  res.render('beta.pug');
+// Landing page
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/test/:pid',(req, res) => {
-  console.log(req.params.pid);
-  res.render('test.pug',{
-    playerid: req.params.pid
+// Player page  — new canonical route
+app.get('/player/:pid', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'player.html'));
+});
+
+// Guest queue page
+app.get('/queue/:pid', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'queue.html'));
+});
+
+// Admin Dashboard
+app.get('/admin', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
+// Backward-compat routes (v3)
+app.get('/player3/:pid', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'player.html'));
+});
+
+app.get('/search3/:pid', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'player.html'));
+});
+
+if (!module.parent) {
+  var server = app.listen(8080, function () {
+    var host = server.address().address;
+    var port = server.address().port;
+    console.log("MusiQ listening at http://%s:%s", host, port);
   });
-});
+}
 
-app.get('/player2/:pid',(req, res) => {
-  console.log(req.params.pid);
-  res.render('player2.pug',{
-    playerid: req.params.pid
-  });
-});
-
-app.get('/player3/:pid',(req, res) => {
-  //console.log(req.params.pid);
-  res.render('player3.pug',{
-    playerid: req.params.pid
-  });
-});
-
-app.get('/search2/:pid',(req, res) => {
-  //console.log(req.params.pid);
-  res.render('search2.pug',{
-    playerid: req.params.pid
-  });
-});
-
-app.get('/search3/:pid',(req, res) => {
-  //console.log(req.params.pid);
-  res.render('search3.pug',{
-    playerid: req.params.pid
-  });
-});
-
-var server = app.listen(8080, function () {
-   var host = server.address().address
-   var port = server.address().port
-   
-   console.log("Example app listening at http://%s:%s", host, port)
-})
+module.exports = app;
