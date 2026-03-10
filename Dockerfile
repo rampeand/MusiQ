@@ -16,4 +16,8 @@ RUN npm install
 COPY . .
 
 EXPOSE 8080
+
+# YouTube API key injected at runtime via environment variable
+ENV YOUTUBE_API_KEY=""
+
 CMD [ "node", "app.js" ]

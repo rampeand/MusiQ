@@ -16,23 +16,32 @@ const timestamp = firebase.firestore.FieldValue.serverTimestamp();
 
 
 //YT API Auth
-gapi.load("client:auth2", function() {
-    gapi.auth2.init({client_id: "637157888993-l9178kevdkdrfpoqbckmgkdck4ljvjvk.apps.googleusercontent.com"});
-  });
-  
-  function loadClient() {
-    gapi.client.setApiKey("AIzaSyBKE9MzjNBkMIf3eyh69uYo8aDBc3VD_5o");
-    return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
-        .then(function() { console.log("GAPI client loaded for API"); },
-              function(err) { console.error("Error loading GAPI client for API", err); });
-  }
+gapi.load("client:auth2", function () {
+    gapi.auth2.init({ client_id: "637157888993-l9178kevdkdrfpoqbckmgkdck4ljvjvk.apps.googleusercontent.com" });
+});
 
-function getPlayerID(){
+function loadClient() {
+    return fetch('/api/config')
+        .then(res => res.json())
+        .then(config => {
+            if (config.youtubeApiKey) {
+                gapi.client.setApiKey(config.youtubeApiKey);
+            } else {
+                console.warn("No YouTube API Key provided by server");
+            }
+            return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+                .then(function () { console.log("GAPI client loaded for API"); },
+                    function (err) { console.error("Error loading GAPI client for API", err); });
+        })
+        .catch(err => console.error("Could not load API config", err));
+}
+
+function getPlayerID() {
     var playerid = document.getElementById("playerid").value;
     return playerid;
 }
 
-function initPlayer(getPlayerID){
+function initPlayer(getPlayerID) {
     console.log("initPlayer()");
     togglePlaylistVisibility();
     updatePlaylist(getPlayerID);
@@ -40,99 +49,99 @@ function initPlayer(getPlayerID){
     loadClient();
 }
 
-function loopPlaylist(){
+function loopPlaylist() {
     console.log("loopPlaylist()");
     var i = 0;
     var batch = firestore.batch();
-    firestore.collection(getPlayerID()).orderBy("position").get().then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
+    firestore.collection(getPlayerID()).orderBy("position").get().then(function (querySnapshot) {
+        querySnapshot.forEach(function (doc) {
             var songRef = firestore.collection(getPlayerID()).doc(doc.id);
             batch.update(songRef, {
                 position: i
             });
             i++;
         });
-    batch.commit();
+        batch.commit();
     });
 }
 
-function endedState(){
+function endedState() {
     console.log("endedState()");
     console.log("video ended naturally on playback");
 
     var songRef = firestore.collection(getPlayerID());
     var query = songRef.where("position", ">", 0);
-    query.get().then(function(querySnapshot) {
+    query.get().then(function (querySnapshot) {
         console.log("Songs left in playlist: " + querySnapshot.size);
 
-        if(querySnapshot.size <= 0){
+        if (querySnapshot.size <= 0) {
             console.log("End of playlist detected");
             loopPlaylist();
-        }else{ //songs left in playlist
+        } else { //songs left in playlist
             batchDecrementPlaylist();
             loadSong();
         }
-    });   
+    });
 }
 
-function loadSong(){
+function loadSong() {
 
     firestore.collection(getPlayerID()).where("position", "==", 0)
-    .onSnapshot(function(querySnapshot) {
+        .onSnapshot(function (querySnapshot) {
 
-        querySnapshot.docs.map(function(song) {
+            querySnapshot.docs.map(function (song) {
 
-            console.log("Playing: " + song.data().songTitle);
-            getYTVID(song.data().videoID);
-            //firestore.collection(getPlayerID()).doc(song.id).update({lastPlayed: timestamp});  will cause endless loop
+                console.log("Playing: " + song.data().songTitle);
+                getYTVID(song.data().videoID);
+                //firestore.collection(getPlayerID()).doc(song.id).update({lastPlayed: timestamp});  will cause endless loop
+            });
+
         });
-        
-    });  
-    
+
     //update last played timestamp
     firestore.collection(getPlayerID()).where("position", "==", 0).get()
-    .then(function(querySnapshot){
-        querySnapshot.docs.map(function(doc) {
-            //console.log(doc.id, " => ", doc.data());
-            firestore.collection(getPlayerID()).doc(doc.id).update({lastPlayed: timestamp});
-        })
-    });
-    
-      
-}
-
-function navigationSanityCheck(){
-    console.log("navigationSanityCheck() - performing sanity checks on player control buttons");
-        var songRef = firestore.collection(getPlayerID());
-        var lastSongQuery = songRef.where("position", ">", 0);
-        var firstSongQuery = songRef.where("position", "<", 0);
-        lastSongQuery.get().then(function(querySnapshot) {
-            
-            console.log("Songs after current position: " + querySnapshot.size);
-    
-            if(querySnapshot.size <= 0){
-                console.log("End of playlist detected - disaable 'Next Song' button");
-                document.getElementById("btnNext").disabled = true;
-            }else{
-                document.getElementById("btnNext").disabled = false;
-            }
+        .then(function (querySnapshot) {
+            querySnapshot.docs.map(function (doc) {
+                //console.log(doc.id, " => ", doc.data());
+                firestore.collection(getPlayerID()).doc(doc.id).update({ lastPlayed: timestamp });
+            })
         });
 
-        firstSongQuery.get().then(function(querySnapshot) {
-            console.log("Songs ahead of current position: " + querySnapshot.size);
-    
-            if(querySnapshot.size <= 0){
-                console.log("Top of playlist detected - disaable 'Previous Song' button");
-                document.getElementById("btnPrev").disabled = true;
-            }else{
-                document.getElementById("btnPrev").disabled = false;
-            }
-        });  
+
 }
 
-function updatePlaylist(){
+function navigationSanityCheck() {
+    console.log("navigationSanityCheck() - performing sanity checks on player control buttons");
+    var songRef = firestore.collection(getPlayerID());
+    var lastSongQuery = songRef.where("position", ">", 0);
+    var firstSongQuery = songRef.where("position", "<", 0);
+    lastSongQuery.get().then(function (querySnapshot) {
+
+        console.log("Songs after current position: " + querySnapshot.size);
+
+        if (querySnapshot.size <= 0) {
+            console.log("End of playlist detected - disaable 'Next Song' button");
+            document.getElementById("btnNext").disabled = true;
+        } else {
+            document.getElementById("btnNext").disabled = false;
+        }
+    });
+
+    firstSongQuery.get().then(function (querySnapshot) {
+        console.log("Songs ahead of current position: " + querySnapshot.size);
+
+        if (querySnapshot.size <= 0) {
+            console.log("Top of playlist detected - disaable 'Previous Song' button");
+            document.getElementById("btnPrev").disabled = true;
+        } else {
+            document.getElementById("btnPrev").disabled = false;
+        }
+    });
+}
+
+function updatePlaylist() {
     console.log("updatePlaylist()");
-    firestore.collection(getPlayerID()).orderBy('position').onSnapshot(function() {//on db update
+    firestore.collection(getPlayerID()).orderBy('position').onSnapshot(function () {//on db update
         console.log("playlist changed")
         navigationSanityCheck();
 
@@ -142,59 +151,59 @@ function updatePlaylist(){
         var ul = document.createElement('ul');
         songsList.innerHTML = ''
         songsList.appendChild(ul);
-        ul.setAttribute("class","list-group");
-        
-        var i=0;
-        firestore.collection(getPlayerID()).orderBy("position").get().then(function(querySnapshot) {
+        ul.setAttribute("class", "list-group");
+
+        var i = 0;
+        firestore.collection(getPlayerID()).orderBy("position").get().then(function (querySnapshot) {
             console.log("Number of songs in playlist: " + querySnapshot.size);
-            querySnapshot.forEach(function(doc) {
+            querySnapshot.forEach(function (doc) {
                 i++;
                 position = (doc.id, " => ", doc.data().position);
                 songTitle = (doc.id, " => ", doc.data().songTitle);
                 thumbnail = (doc.id, " => ", doc.data().vidArray.snippet.thumbnails.default.url);
                 videoID = (doc.id, " => ", doc.data().videoID);
-    
+
                 var li = document.createElement('li');
                 var thumbImg = document.createElement('img');
                 thumbImg.setAttribute("src", thumbnail);
-                thumbImg.setAttribute("width","13%");
+                thumbImg.setAttribute("width", "13%");
                 li.appendChild(thumbImg);
 
                 arrowUpIcon = document.createElement('i');
                 arrowUpIcon.setAttribute("class", "material-icons");
-                arrowUpIcon.setAttribute("style", "font-size:"+iconSize+"; color:blue; padding-left:2%;");
+                arrowUpIcon.setAttribute("style", "font-size:" + iconSize + "; color:blue; padding-left:2%;");
                 arrowUpIcon.textContent = "arrow_upward";
-                arrowUpIcon.setAttribute("onClick","changeSongPosition('playlistUp','"+ doc.id + "'," + position +")");
-                
-                if (position > 0){
+                arrowUpIcon.setAttribute("onClick", "changeSongPosition('playlistUp','" + doc.id + "'," + position + ")");
+
+                if (position > 0) {
                     li.appendChild(arrowUpIcon);
                 }
-                
+
 
                 removeIcon = document.createElement('i');
                 removeIcon.setAttribute("class", "material-icons");
-                removeIcon.setAttribute("style", "font-size:"+iconSize+"; color:red; padding-left:2%; padding-right:2%");
+                removeIcon.setAttribute("style", "font-size:" + iconSize + "; color:red; padding-left:2%; padding-right:2%");
                 removeIcon.textContent = "remove_circle_outline";
-                removeIcon.setAttribute("onClick","deleteSong('"+ doc.id + "'," + position +")");
+                removeIcon.setAttribute("onClick", "deleteSong('" + doc.id + "'," + position + ")");
                 li.appendChild(removeIcon);
 
                 arrowDownIcon = document.createElement('i');
                 arrowDownIcon.setAttribute("class", "material-icons");
-                arrowDownIcon.setAttribute("style", "font-size:"+iconSize+"; color:blue; padding-right:2%;");
+                arrowDownIcon.setAttribute("style", "font-size:" + iconSize + "; color:blue; padding-right:2%;");
                 arrowDownIcon.textContent = "arrow_downward";
-                arrowDownIcon.setAttribute("onClick","changeSongPosition('playlistDown','"+ doc.id + "'," + position +")");
-                
+                arrowDownIcon.setAttribute("onClick", "changeSongPosition('playlistDown','" + doc.id + "'," + position + ")");
+
                 //if not last element in playlist display 'down' arrow icon
-                if (i != querySnapshot.size){
+                if (i != querySnapshot.size) {
                     li.appendChild(arrowDownIcon);
                 }
-                
+
 
                 playIcon = document.createElement('i');
                 playIcon.setAttribute("class", "material-icons");
-                playIcon.setAttribute("style", "font-size:"+iconSize+"; color:green; padding-right:2%;");
+                playIcon.setAttribute("style", "font-size:" + iconSize + "; color:green; padding-right:2%;");
                 playIcon.textContent = "play_circle_outline";
-                playIcon.setAttribute("onClick","changeSongPosition('playCurrent','"+ doc.id + "'," + position +")");
+                playIcon.setAttribute("onClick", "changeSongPosition('playCurrent','" + doc.id + "'," + position + ")");
                 li.appendChild(playIcon);
 
                 titleTextElement = document.createElement('text');
@@ -202,10 +211,10 @@ function updatePlaylist(){
                 titleTextElement.appendChild(titleTextNode);
 
                 ul.appendChild(li);
-                if (position == 0){
-                    li.setAttribute("class","list-group-item active");
-                }else{
-                    li.setAttribute("class","list-group-item");
+                if (position == 0) {
+                    li.setAttribute("class", "list-group-item active");
+                } else {
+                    li.setAttribute("class", "list-group-item");
                 }
                 li.appendChild(titleTextElement);
             });
@@ -213,58 +222,58 @@ function updatePlaylist(){
     });
 }
 
-function batchDecrementPlaylist(){
+function batchDecrementPlaylist() {
     const decrement = firebase.firestore.FieldValue.increment(-1);
     var batch = firestore.batch();
-    firestore.collection(getPlayerID()).get().then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
+    firestore.collection(getPlayerID()).get().then(function (querySnapshot) {
+        querySnapshot.forEach(function (doc) {
             var songRef = firestore.collection(getPlayerID()).doc(doc.id);
             batch.update(songRef, {
                 position: decrement
             });
         });
-    batch.commit();
+        batch.commit();
     });
 }
 
-function batchIncrementPlaylist(){
+function batchIncrementPlaylist() {
     const increment = firebase.firestore.FieldValue.increment(1);
     var batch = firestore.batch();
-    firestore.collection(getPlayerID()).get().then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
+    firestore.collection(getPlayerID()).get().then(function (querySnapshot) {
+        querySnapshot.forEach(function (doc) {
             var songRef = firestore.collection(getPlayerID()).doc(doc.id);
             batch.update(songRef, {
                 position: increment
             });
         });
-    batch.commit();
+        batch.commit();
     });
 }
 
-function batchClearPlaylist(){
+function batchClearPlaylist() {
     var batch = firestore.batch();
-    firestore.collection(getPlayerID()).get().then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
+    firestore.collection(getPlayerID()).get().then(function (querySnapshot) {
+        querySnapshot.forEach(function (doc) {
             var songRef = firestore.collection(getPlayerID()).doc(doc.id);
             batch.delete(songRef);
         });
-    batch.commit();
+        batch.commit();
     });
 }
 
-function deleteSong(docID, position){
+function deleteSong(docID, position) {
     var songRef = firestore.collection(getPlayerID());
     var query = songRef.where("position", ">=", position);
     const decrement = firebase.firestore.FieldValue.increment(-1);
     var batch = firestore.batch();
 
-    query.get().then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
+    query.get().then(function (querySnapshot) {
+        querySnapshot.forEach(function (doc) {
             var songRef = firestore.collection(getPlayerID()).doc(doc.id);
-            if(songRef.id == docID){
+            if (songRef.id == docID) {
                 console.log("delete " + songRef.id);
                 batch.delete(songRef)
-            }else{
+            } else {
                 console.log("decrement " + songRef.id);
                 batch.update(songRef, {
                     position: decrement
@@ -272,32 +281,32 @@ function deleteSong(docID, position){
             }
         });
         batch.commit();
-        if (position == 0){//Play next song if song being deleted is currently playing.
+        if (position == 0) {//Play next song if song being deleted is currently playing.
             loadSong();
         }
     });
 }
 
-function changeSongPosition(action, docID, position){
+function changeSongPosition(action, docID, position) {
     const decrement = firebase.firestore.FieldValue.increment(-1);
     const increment = firebase.firestore.FieldValue.increment(1);
-    
+
     var batch = firestore.batch();
     var songRef = firestore.collection(getPlayerID());
     var query;
-    switch(action){
-        case "playlistUp": 
-            query = songRef.where("position", "<=", (position)).where("position", ">=", (position-1));
-            query.get().then(function(querySnapshot) {
-                querySnapshot.forEach(function(doc) {
+    switch (action) {
+        case "playlistUp":
+            query = songRef.where("position", "<=", (position)).where("position", ">=", (position - 1));
+            query.get().then(function (querySnapshot) {
+                querySnapshot.forEach(function (doc) {
                     var songRef = firestore.collection(getPlayerID()).doc(doc.id);
                     console.log("Current song ref: " + songRef.id);
-                    if(songRef.id == docID){
+                    if (songRef.id == docID) {
                         console.log("increment " + songRef.id);
                         batch.update(songRef, {
                             position: decrement
                         });
-                    }else{
+                    } else {
                         console.log("decrement " + songRef.id);
                         batch.update(songRef, {
                             position: increment
@@ -305,23 +314,23 @@ function changeSongPosition(action, docID, position){
                     }
                 });
                 batch.commit();
-                if (position == 0){//Play next song if song being deleted is currently playing.
+                if (position == 0) {//Play next song if song being deleted is currently playing.
                     loadSong();
                 }
             });
             break;
         case "playlistDown":
-            query = songRef.where("position", "<=", (position+1)).where("position", ">=", position);
-            query.get().then(function(querySnapshot) {
-                querySnapshot.forEach(function(doc) {
+            query = songRef.where("position", "<=", (position + 1)).where("position", ">=", position);
+            query.get().then(function (querySnapshot) {
+                querySnapshot.forEach(function (doc) {
                     var songRef = firestore.collection(getPlayerID()).doc(doc.id);
                     console.log("Current song ref: " + songRef.id);
-                    if(songRef.id == docID){
+                    if (songRef.id == docID) {
                         console.log("increment " + songRef.id);
                         batch.update(songRef, {
                             position: increment
                         });
-                    }else{
+                    } else {
                         console.log("decrement " + songRef.id);
                         batch.update(songRef, {
                             position: decrement
@@ -329,21 +338,21 @@ function changeSongPosition(action, docID, position){
                     }
                 });
                 batch.commit();
-                if (position == 0){//Play next song if song being deleted is currently playing.
+                if (position == 0) {//Play next song if song being deleted is currently playing.
                     loadSong();
                 }
             });
             break;
         case "playCurrent":
-            songRef.get().then(function(querySnapshot) {
-                querySnapshot.forEach(function(doc) {
+            songRef.get().then(function (querySnapshot) {
+                querySnapshot.forEach(function (doc) {
                     var songRef = firestore.collection(getPlayerID()).doc(doc.id);
-                    if(songRef.id == docID){
+                    if (songRef.id == docID) {
                         console.log("Selected song being played now: " + doc.data().songTitle);
                         batch.update(songRef, {
                             position: 0
                         });
-                    }else if(doc.id, " => ", doc.data().position == 0){
+                    } else if (doc.id, " => ", doc.data().position == 0) {
                         console.log("Currently playing song being swapped: " + doc.data().songTitle);
                         batch.update(songRef, {
                             position: position
@@ -351,38 +360,38 @@ function changeSongPosition(action, docID, position){
                     }
                 });
                 batch.commit();
-            });       
+            });
             loadSong();
             break;
     }
 }
 
-function togglePlaylistVisibility(){
+function togglePlaylistVisibility() {
     let playlistUI = document.getElementById("playlist");
     let playlistToggleBtn = document.getElementById("togglePlaylistUI");
     let clearPlaylistBtn = document.getElementById("btnClearPlaylist");
 
-    if (playlistUI.style.visibility == "hidden"){
+    if (playlistUI.style.visibility == "hidden") {
         playlistUI.style.visibility = "visible";
         console.log("playlist shown");
         //playlistToggleBtn.style.color = "red";
         clearPlaylistBtn.style.visibility = "visible";
         playlistToggleBtn.textContent = "Hide Playlist";
-        
+
     } else {
         playlistUI.style.visibility = "hidden";
         console.log("playlistUI hidden");
         clearPlaylistBtn.style.visibility = "hidden";
         //playlistToggleBtn.style.color = "green";
         playlistToggleBtn.textContent = "Show Playlist";
-    }   
+    }
 }
 //Song search functions below
 
 var ytSearchResults;
 var savresponse;
 
-function getPlayerID(){
+function getPlayerID() {
     var playerid = document.getElementById("playerid").value;
     return playerid;
 }
@@ -392,64 +401,64 @@ var songRef = firestore.collection(getPlayerID());
 const outputHeader = document.querySelector("#headerTest");
 const inputTextField = document.querySelector("#searchTextField");
 
-btnAddSong.addEventListener("click", function() {
+btnAddSong.addEventListener("click", function () {
 
 });
 
-searchButton.addEventListener("click", function() {
+searchButton.addEventListener("click", function () {
     const ytSearchQuery = inputTextField.value;
     searchYouTube(ytSearchQuery);
 })
 
-function modModal (response){
+function modModal(response) {
     const searchResultList = document.querySelector('#searchResultList');
     searchResultList.innerHTML = '';//clear results from previous search.
 
-    var i, title, videoID, thumbnails,titleTextNode;
-    
+    var i, title, videoID, thumbnails, titleTextNode;
+
     var ul = document.createElement('ul');
     searchResultList.appendChild(ul);
 
-    for (i=0;i<response.result.items.length; i++){
+    for (i = 0; i < response.result.items.length; i++) {
         title = response.result.items[i].snippet.title;
         videoID = response.result.items[i].id.videoId;
         thumbnails = response.result.items[i].snippet.thumbnails.default.url;
-        testres =  response.result.items[i];
+        testres = response.result.items[i];
         var li = document.createElement('li');
         ul.appendChild(li);
-        
+
         titleTextNode = document.createTextNode(title);
 
-        var button=document.createElement('input');
-        button.setAttribute('type','button');
+        var button = document.createElement('input');
+        button.setAttribute('type', 'button');
         button.setAttribute('value', 'Add ' + title);
-        button.setAttribute('onclick','addSongToTRDB(ytSearchResults.result.items['+ i +'])');
+        button.setAttribute('onclick', 'addSongToTRDB(ytSearchResults.result.items[' + i + '])');
 
         var img = document.createElement('img');
         img.setAttribute("src", thumbnails);
-        img.setAttribute("style","padding:2%")
+        img.setAttribute("style", "padding:2%")
         li.appendChild(img);
         li.appendChild(button);
     }
 }
 
-  function searchYouTube(ytQuery) {
+function searchYouTube(ytQuery) {
     console.log(ytQuery);
     return gapi.client.youtube.search.list({
-        "part"              : "snippet",
-        "maxResults"        : 5,
-        "q"                 : ytQuery,
-        "type"              : "video",
-        "videoCategoryId"   : 10 //locks down search results to music related results
+        "part": "snippet",
+        "maxResults": 5,
+        "q": ytQuery,
+        "type": "video",
+        "videoCategoryId": 10 //locks down search results to music related results
     })
-        .then(function(response) {
+        .then(function (response) {
             ytSearchResults = response;
             modModal(ytSearchResults);
         },
-            function(err) { console.error("Execute error", err); });
-  }
-  
-  function addSongToTRDB(selectedSong){
+            function (err) { console.error("Execute error", err); });
+}
+
+function addSongToTRDB(selectedSong) {
     $('#ytSearchResultModal').modal('hide'); //close search results modal
     $('#searchBoxModal').modal('hide'); //close search box modal
     alert("Song added to playlist!");
@@ -462,24 +471,24 @@ function modModal (response){
 
     query.get().then(snap => {
         size = snap.size
-        console.log("Active songs in playlist : "+ snap.size);
-        
+        console.log("Active songs in playlist : " + snap.size);
+
         songRef.add({
-            position    : size,
-            addedOn     : timestamp,
-            lastPlayed  : timestamp,
-            songTitle   : selSongTitle,
-            videoID     : selVideoID,
-            thumbnails  : selThumbnails,
-            vidArray    : selectedSong
+            position: size,
+            addedOn: timestamp,
+            lastPlayed: timestamp,
+            songTitle: selSongTitle,
+            videoID: selVideoID,
+            thumbnails: selThumbnails,
+            vidArray: selectedSong
         })
-        .then(function(songRef) {
-            console.log("Document written with ID: ", songRef.id);
-        })
-        .catch(function(error) {
-            console.error("Error updating playlist with adding song document: ", error);
-        });
+            .then(function (songRef) {
+                console.log("Document written with ID: ", songRef.id);
+            })
+            .catch(function (error) {
+                console.error("Error updating playlist with adding song document: ", error);
+            });
 
     });
 
-  }
+}

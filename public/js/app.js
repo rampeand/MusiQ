@@ -124,12 +124,21 @@ function updatePlayPauseIcon() {
 // ──────────────── Google API Client ────────────────
 
 function loadGapiClient() {
-    gapi.load('client', function () {
-        gapi.client.setApiKey('AIzaSyBKE9MzjNBkMIf3eyh69uYo8aDBc3VD_5o');
-        gapi.client.load('https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest')
-            .then(function () { console.log('YouTube Data API loaded'); })
-            .catch(function (err) { console.error('Error loading YT API', err); });
-    });
+    fetch('/api/config')
+        .then(res => res.json())
+        .then(config => {
+            gapi.load('client', function () {
+                if (config.youtubeApiKey) {
+                    gapi.client.setApiKey(config.youtubeApiKey);
+                } else {
+                    console.warn("No YouTube API Key provided by server");
+                }
+                gapi.client.load('https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest')
+                    .then(function () { console.log('YouTube Data API loaded'); })
+                    .catch(function (err) { console.error('Error loading YT API', err); });
+            });
+        })
+        .catch(err => console.error("Could not load API config", err));
 }
 
 // ──────────────── Search ────────────────

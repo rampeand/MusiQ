@@ -19,38 +19,38 @@ var songRef = firestore.collection("playlist");
 const outputHeader = document.querySelector("#headerTest");
 const inputTextField = document.querySelector("#searchTextField");
 
-searchButton.addEventListener("click", function() {
+searchButton.addEventListener("click", function () {
     const ytSearchQuery = inputTextField.value;
     searchYouTube(ytSearchQuery);
 })
 
-function modModal (response){
+function modModal(response) {
     const searchResultList = document.querySelector('#searchResultList');
     searchResultList.innerHTML = '';//clear results from previous search.
 
-    var i, title, videoID, thumbnails,titleTextNode;
-    
+    var i, title, videoID, thumbnails, titleTextNode;
+
     var ul = document.createElement('ul');
     searchResultList.appendChild(ul);
 
-    for (i=0;i<response.result.items.length; i++){
+    for (i = 0; i < response.result.items.length; i++) {
         title = response.result.items[i].snippet.title;
         videoID = response.result.items[i].id.videoId;
         thumbnails = response.result.items[i].snippet.thumbnails.default.url;
-        testres =  response.result.items[i];
+        testres = response.result.items[i];
         var li = document.createElement('li');
         ul.appendChild(li);
-        
+
         titleTextNode = document.createTextNode(title);
 
-        var button=document.createElement('input');
-        button.setAttribute('type','button');
+        var button = document.createElement('input');
+        button.setAttribute('type', 'button');
         button.setAttribute('value', 'Play ' + title);
-        button.setAttribute('onclick','addSongToTRDB(ytSearchResults.result.items['+ i +'])');
+        button.setAttribute('onclick', 'addSongToTRDB(ytSearchResults.result.items[' + i + '])');
 
         var img = document.createElement('img');
         img.setAttribute("src", thumbnails);
-        img.setAttribute("style","padding:2%")
+        img.setAttribute("style", "padding:2%")
         li.appendChild(img);
         li.appendChild(button);
     }
@@ -59,15 +59,15 @@ function modModal (response){
 function authenticateAndLoadClient() {
     //authenticate();
     loadClient();
-  }
-  
-  //OAuth to be implemented later
-  function authenticate() {
+}
+
+//OAuth to be implemented later
+function authenticate() {
     return gapi.auth2.getAuthInstance()
-        .signIn({scope: "https://www.googleapis.com/auth/youtube.force-ssl"})
-        .then(function() { console.log("Sign-in successful"); },
-              function(err) { console.error("Error signing in", err); });
-  }
+        .signIn({ scope: "https://www.googleapis.com/auth/youtube.force-ssl" })
+        .then(function () { console.log("Sign-in successful"); },
+            function (err) { console.error("Error signing in", err); });
+}
 
 function renderButton() {
     gapi.signin2.render('my-signin2', {
@@ -82,29 +82,38 @@ function renderButton() {
 }
 
 function loadClient() {
-    gapi.client.setApiKey("AIzaSyBKE9MzjNBkMIf3eyh69uYo8aDBc3VD_5o");
-    return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
-        .then(function() { console.log("GAPI client loaded for API"); },
-              function(err) { console.error("Error loading GAPI client for API", err); });
-  }
+    return fetch('/api/config')
+        .then(res => res.json())
+        .then(config => {
+            if (config.youtubeApiKey) {
+                gapi.client.setApiKey(config.youtubeApiKey);
+            } else {
+                console.warn("No YouTube API Key provided by server");
+            }
+            return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+                .then(function () { console.log("GAPI client loaded for API"); },
+                    function (err) { console.error("Error loading GAPI client for API", err); });
+        })
+        .catch(err => console.error("Could not load API config", err));
+}
 
-  function searchYouTube(ytQuery) {
+function searchYouTube(ytQuery) {
     console.log(ytQuery);
     return gapi.client.youtube.search.list({
-        "part"              : "snippet",
-        "maxResults"        : 5,
-        "q"                 : ytQuery,
-        "type"              : "video",
-        "videoCategoryId"   : 10 //locks down search results to music related results
+        "part": "snippet",
+        "maxResults": 5,
+        "q": ytQuery,
+        "type": "video",
+        "videoCategoryId": 10 //locks down search results to music related results
     })
-        .then(function(response) {
+        .then(function (response) {
             ytSearchResults = response;
             modModal(ytSearchResults);
         },
-            function(err) { console.error("Execute error", err); });
-  }
-  
-  function addSongToTRDB(selectedSong){
+            function (err) { console.error("Execute error", err); });
+}
+
+function addSongToTRDB(selectedSong) {
     $('#ytSearchResultModal').modal('hide');
 
     var selSongTitle = selectedSong.snippet.title;
@@ -115,27 +124,27 @@ function loadClient() {
 
     query.get().then(snap => {
         size = snap.size
-        console.log("Active songs in playlist : "+ snap.size);
-        
+        console.log("Active songs in playlist : " + snap.size);
+
         songRef.add({
-            position    : size,
-            songTitle   : selSongTitle,
-            videoID     : selVideoID,
-            thumbnails  : selThumbnails,
-            vidArray    : selectedSong
+            position: size,
+            songTitle: selSongTitle,
+            videoID: selVideoID,
+            thumbnails: selThumbnails,
+            vidArray: selectedSong
         })
-        .then(function(songRef) {
-            console.log("Document written with ID: ", songRef.id);
-        })
-        .catch(function(error) {
-            console.error("Error updating playlist with adding song document: ", error);
-        });
+            .then(function (songRef) {
+                console.log("Document written with ID: ", songRef.id);
+            })
+            .catch(function (error) {
+                console.error("Error updating playlist with adding song document: ", error);
+            });
 
     });
 
-  }
+}
 
-  //for OAuth
-  gapi.load("client:auth2", function() {
-    gapi.auth2.init({client_id: "637157888993-l9178kevdkdrfpoqbckmgkdck4ljvjvk.apps.googleusercontent.com"});
-  });
+//for OAuth
+gapi.load("client:auth2", function () {
+    gapi.auth2.init({ client_id: "637157888993-l9178kevdkdrfpoqbckmgkdck4ljvjvk.apps.googleusercontent.com" });
+});

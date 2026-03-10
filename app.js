@@ -34,6 +34,14 @@ app.get('/search3/:pid', function (req, res) {
   res.sendFile(path.join(__dirname, 'public', 'player.html'));
 });
 
+// Provide API keys securely
+app.get('/api/config', function (req, res) {
+  res.json({
+    youtubeApiKey: process.env.YOUTUBE_API_KEY || ''
+  });
+});
+
+
 if (!module.parent) {
   var server = app.listen(8080, function () {
     var host = server.address().address;
