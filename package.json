@@ -7,7 +7,7 @@
     "test": "mocha --reporter xunit > test-report.xml --exit"
   },
   "author": "Andre Rampersad",
-  "license": "ISC",
+  "license": "BSD-3-Clause",
   "dependencies": {
     "express": "^4.17.1",
     "pug": "^2.0.4"

@@ -93,6 +93,12 @@ npm test
 
 ---
 
+## 📜 License
+
+This project is distributed under the BSD-3-Clause License. See the [LICENSE](LICENSE) file for more information.
+
+---
+
 <div align="center">
   <i>Built with ❤️ by Andre Rampersad</i>
 </div>

@@ -1,8 +1,0 @@
-<testsuite name="Mocha Tests" tests="6" failures="0" errors="0" skipped="0" timestamp="Thu, 12 Feb 2026 01:30:04 GMT" time="0.059">
-<testcase classname="Index render test" name="should return home page" time="0.026"/>
-<testcase classname="Player page render test" name="should return player page for /player/:pid" time="0.007"/>
-<testcase classname="Queue page render test" name="should return queue page for /queue/:pid" time="0.005"/>
-<testcase classname="Admin page render test" name="should return admin page for /admin" time="0.006"/>
-<testcase classname="Backward-compat player3 route test" name="should return player page for /player3/:pid" time="0.006"/>
-<testcase classname="Backward-compat search3 route test" name="should return player page for /search3/:pid" time="0.004"/>
-</testsuite>
